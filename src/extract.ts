@@ -6,21 +6,6 @@ import inquirer from 'inquirer'
 import { createSpinner } from 'nanospinner'
 import Seven from 'node-7z'
 import { createExtractorFromFile } from 'node-unrar-js'
-import yargs from 'yargs'
-
-const argsProm = yargs(process.argv)
-	.options({
-		file: {
-			type: 'string',
-		},
-		o: {
-			type: 'string',
-		},
-		p: {
-			type: 'string',
-		},
-	})
-	.parse()
 
 type Extractor = (
 	filename: string,
@@ -90,9 +75,10 @@ const getExtractorFromCLI = async () => {
 
 const getDirName = (filename: string) => parse(filename).name
 
-export async function extractWorker() {
-	const args = await argsProm
-	const filename: string = args.file!
+export async function extractWorker(args: Record<string, string>) {
+	if (!args.file)
+		throw new Error('Not file to extract, use --file to specify the file')
+	const filename: string = args.file
 	let extractor = extractStrategySelector(filename)
 	if (!extractor) extractor = await getExtractorFromCLI()
 	const finalDir = args.o

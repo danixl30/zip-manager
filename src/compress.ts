@@ -6,21 +6,6 @@ import archiver from 'archiver'
 import inquirer from 'inquirer'
 import { createSpinner } from 'nanospinner'
 import Seven from 'node-7z'
-import yargs from 'yargs'
-
-const args = await yargs(process.argv)
-	.options({
-		path: {
-			type: 'string',
-		},
-		type: {
-			type: 'string',
-		},
-		o: {
-			type: 'string',
-		},
-	})
-	.parse()
 
 const formats = ['ZIP', 'RAR', '7z'] as const
 type Format = (typeof formats)[number]
@@ -100,7 +85,7 @@ const getCompressorFromCLI = async () => {
 	return strategies[strategy.strategy] || strategies['ZIP']
 }
 
-export async function compressWorker() {
+export async function compressWorker(args: Record<string, string>) {
 	const pathToCompress = args.path
 		? join(process.cwd(), args.path)
 		: process.cwd()
